@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User2::List</title>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+
+            const user2 = document.getElementsByClassName('user2')[0];
+
+            // User2 목록 데이터 요청하기
+            fetch('http://localhost:8080/ch09/user2/list.do?mode=json')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+
+                    for(const user of data) {
+                        const html = `<tr>
+                                <td>${user.userid}</td>
+                                <td>${user.name}</td>
+                                <td>${user.birth}</td>
+                                <td>${user.addr}</td>
+                                <td>
+                                    <a href='./modify.html?userid=${user.userid}'> 수정 </a>
+                                    <a href='#' class='del' data-userid=${user.userid}'> 삭제 </a>
+                                </td>
+                            </tr>`
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
+
+            // -------------------------------    
+            // 삭제 요청하기
+            // -------------------------------
+            const dels = document.getElementsByClassName('del');
+
+            // 동적 이벤트 처리
+            document.addEventListener('click', async function(e){
+
+                if(e.target.classList.contains('del')){
+                    e.preventDefault();
+
+                    const usesrid = e.target.dataset.userid; 
+                    console.log(userid);
+
+                    const params = `mode=json&userid=${userid}`;
+                    
+                    const response = await fetch(`http://localhost:8080/ch09/user1/delete.do?${params}`);
+                    const data = await response.json();
+
+                    console.log(data);
+
+                    if(data != null){
+                        alert(data.userid + '삭제 성공!');
+
+                        //새로고침
+                        location.reload();
+                    }          
+                                        
+                }
+                
+            });
+                
+        });        
+        
+
+    </script>
+
+
+
+
+</head>
+<body>
+    <h3>User2::List</h3>
+
+    <a href="./list.html">User2목록</a>
+    <a href="./register.html">User2등록</a>
+
+    <table class="user2" border="1">
+        <tr>
+            <td>아이디</td>
+            <td>이름</td>
+            <td>생년월일</td>
+            <td>주소</td>
+        </tr>
+    </table>
+</body>
+</html>
